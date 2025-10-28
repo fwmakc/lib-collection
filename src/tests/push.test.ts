@@ -1,4 +1,4 @@
-import { Collection } from '../collection.class';
+import { Collection } from '..';
 
 describe('Проверка коллекции push', () => {
   const testCases = [
