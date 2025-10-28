@@ -1,0 +1,50 @@
+{
+  "name": "lib-collection",
+  "version": "0.0.1",
+  "description": "Library for work with collection",
+  "keywords": [
+    "collection",
+    "data structures",
+    "key-value pairs",
+    "iterator",
+    "types",
+    "map",
+    "filter",
+    "find",
+    "forEach",
+    "manipulation",
+    "utility",
+    "array-like",
+    "custom collection",
+    "reverse iteration",
+    "store"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/fwmakc/lib-collection.git",
+  "author": "fwmakc <fwmakc@mail.ru>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint \"src/**/*.{js,mjs,cjs,ts,mts,cts}\" --fix",
+    "test": "jest --config ./jest.config.js"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^30.1.3",
+    "prettier": "^2.3.2",
+    "ts-jest": "^29.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+  }
+}
