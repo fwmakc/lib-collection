@@ -1,6 +1,6 @@
 import { Collection } from '..';
 
-describe('Проверка коллекции values', () => {
+describe('Проверка коллекции add', () => {
   const testCases = [
     {
       collection: {
@@ -36,8 +36,10 @@ describe('Проверка коллекции values', () => {
 
   testCases.forEach(({ collection }) => {
     const col = new Collection(collection);
-    const values = col.values;
-    console.log(values);
+    col.add({ a: 100, z: 999, 2: [true, true, true] });
+    const values = col.elements;
+    values.z = 9999;
+    console.log(col.elements);
 
     it(`Исходная строка: ${collection}`, () => {
       expect(true).toBeTruthy();

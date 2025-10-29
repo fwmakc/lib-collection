@@ -36,8 +36,8 @@ describe('Проверка коллекции iterator', () => {
 
   testCases.forEach(({ collection }) => {
     const col = new Collection(collection);
-    for (const item of col) {
-      console.log('-- ', item);
+    for (const [value, key] of col) {
+      console.log('-- ', { key, value });
     }
     it(`Исходная строка: ${collection}`, () => {
       expect(true).toBeTruthy();

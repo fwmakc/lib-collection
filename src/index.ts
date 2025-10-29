@@ -12,10 +12,100 @@ type CollectionType = {
  */
 export class Collection {
   /** @type {Array<string>} */
-  list: Array<string> = [];
+  protected list: Array<string> = [];
 
   /** @type {CollectionType} */
-  collection: CollectionType = {};
+  protected collection: CollectionType = {};
+
+  /**
+   * Returns all elements from collection.
+   * @returns {CollectionType} Elements of collection.
+   */
+  get elements(): CollectionType {
+    return this.collection;
+  }
+
+  /**
+   * Set object in collection.
+   * @param {Object} obj - Object to be set.
+   */
+  set elements(obj: CollectionType) {
+    this.clear();
+    if (!obj || typeof obj !== 'object') {
+      return;
+    }
+    this.list = [...Object.keys(obj)];
+    this.collection = { ...obj };
+  }
+
+  /**
+   * Returns all elements from collection as array of key-value pair.
+   * @returns {Array<Array<any> | undefined>} Elements of collection as key-value pair array.
+   */
+  get entries(): Array<Array<any> | undefined> {
+    const length = this.list.length;
+    const result: Array<any> = [];
+    if (!length) {
+      return result;
+    }
+    for (let index = 0; index < length; index++) {
+      const key = this.list[index];
+      const value = this.collection[key];
+      result.push([key, value]);
+    }
+    return result;
+  }
+
+  /**
+   * Set elements in collection from array of key-value pairs.
+   * @param {Array<Array<any> | undefined>} pairs - Array to be set.
+   */
+  set entries(pairs: Array<Array<any> | undefined>) {
+    this.clear();
+    if (!pairs || !Array.isArray(pairs) || !pairs?.length) {
+      return;
+    }
+    for (const pair of pairs) {
+      if (!pair || !Array.isArray(pair) || !pair?.length) {
+        continue;
+      }
+      const [keyPair, value] = pair;
+      const key = String(keyPair);
+      this.collection[key] = value;
+      this.list.push(key);
+    }
+  }
+
+  /**
+   * Returns all keys in collection.
+   * @returns {Array<string>} Array of keys.
+   */
+  get keys(): Array<string> {
+    return [...this.list];
+  }
+
+  /**
+   * Returns number of elements in collection.
+   * @returns {number} Length of collection.
+   */
+  get length(): number {
+    return this.list.length;
+  }
+
+  /**
+   * Returns all values in collection.
+   * @returns {Array<any>} Array of values.
+   */
+  get values(): Array<any> {
+    const values: Array<any> = [];
+    if (!this.list.length) {
+      return values;
+    }
+    this.list.forEach((key) => {
+      values.push(this.collection[key]);
+    });
+    return values;
+  }
 
   /**
    * Creates instance of Collection.
@@ -25,6 +115,8 @@ export class Collection {
     if (!elements) {
       return;
     }
+
+    Object.create(null);
 
     this.collection = elements;
     this.list = Object.keys(elements);
@@ -43,14 +135,50 @@ export class Collection {
       next() {
         if (index < elements.length) {
           const key = elements[index];
-          const value = values[key];
+          const val = values[key];
           index += 1;
-          return { value: [value, key, index - 1], done: false };
+          return { value: [val, key, index - 1], done: false };
         } else {
-          return { done: true };
+          return { value: [], done: true };
         }
       },
     };
+  }
+
+  /**
+   * Append and replace object in collection.
+   * @param {Object} obj - Object to be added. Keys will be replaced if exist.
+   */
+  add(obj: CollectionType) {
+    if (!obj || typeof obj !== 'object') {
+      return;
+    }
+    this.list = [...this.list, ...Object.keys(obj)];
+    this.collection = {
+      ...this.collection,
+      ...obj,
+    };
+  }
+
+  /**
+   * Add and replace elements in collection from array of key-value pairs.
+   * @param {Array<Array<any> | undefined>} pairs - Array to be added. Keys will be replaced if exist.
+   */
+  addEntries(pairs: Array<Array<any> | undefined>) {
+    if (!pairs || !Array.isArray(pairs) || !pairs?.length) {
+      return;
+    }
+    for (const pair of pairs) {
+      if (!pair || !Array.isArray(pair) || !pair?.length) {
+        continue;
+      }
+      const [keyPair, value] = pair;
+      const key = String(keyPair);
+      this.collection[key] = value;
+      if (!this.list.includes(key)) {
+        this.list.push(key);
+      }
+    }
   }
 
   /**
@@ -141,22 +269,6 @@ export class Collection {
   }
 
   /**
-   * Returns all keys in collection.
-   * @returns {Array<string>} Array of keys.
-   */
-  keys(): Array<string> {
-    return [...this.list];
-  }
-
-  /**
-   * Returns number of elements in collection.
-   * @returns {number} Length of collection.
-   */
-  length(): number {
-    return this.list.length;
-  }
-
-  /**
    * Removes and returns last element from collection.
    * @returns {any} Removed value.
    */
@@ -215,21 +327,6 @@ export class Collection {
   }
 
   /**
-   * Returns all values in collection.
-   * @returns {Array<any>} Array of values.
-   */
-  values(): Array<any> {
-    const values: Array<any> = [];
-    if (!this.list.length) {
-      return values;
-    }
-    this.list.forEach((key) => {
-      values.push(this.collection[key]);
-    });
-    return values;
-  }
-
-  /**
    * Executes provided function once for each key-value pair in collection.
    * @param {function} callback - Function to execute for each element.
    * @param {any} [thisArg] - Value to use as `this` when executing callback.
@@ -239,7 +336,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => boolean,
     thisArg?: any,
   ): boolean {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return false;
     }
@@ -263,7 +360,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> {
-    const length = this.length();
+    const length = this.list.length;
     const result: Array<any> = [];
     if (!length) {
       return result;
@@ -288,7 +385,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> | undefined {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return undefined;
     }
@@ -312,7 +409,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> | undefined {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return undefined;
     }
@@ -336,7 +433,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => void,
     thisArg?: any,
   ): void {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return;
     }
@@ -357,7 +454,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => void,
     thisArg?: any,
   ): void {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return;
     }
@@ -378,7 +475,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => any,
     thisArg?: any,
   ): Array<any> {
-    const length = this.length();
+    const length = this.list.length;
     const result: Array<any> = new Array(length);
     if (!length) {
       return result;
@@ -401,7 +498,7 @@ export class Collection {
     callback: (value: any, key: string, index: number) => boolean,
     thisArg?: any,
   ): boolean {
-    const length = this.length();
+    const length = this.list.length;
     if (!length) {
       return false;
     }
