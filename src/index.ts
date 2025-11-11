@@ -3,25 +3,25 @@
  * @typedef {Object} CollectionType
  * @property {any} [key] - Value associated with key in collection.
  */
-type CollectionType = {
-  [key: string]: any;
+type CollectionType<T> = {
+  [key: string]: T;
 };
 
 /**
  * Class representing collection with various operations such as manipulations with arrays and objects.
  */
-export class Collection {
+export class Collection<T> {
   /** @type {Array<string>} */
   protected list: Array<string> = [];
 
   /** @type {CollectionType} */
-  protected collection: CollectionType = {};
+  protected collection: CollectionType<T> = {};
 
   /**
    * Returns all elements from collection.
    * @returns {CollectionType} Elements of collection.
    */
-  get elements(): CollectionType {
+  get elements(): CollectionType<T> {
     return this.collection;
   }
 
@@ -29,7 +29,7 @@ export class Collection {
    * Set object in collection.
    * @param {Object} obj - Object to be set.
    */
-  set elements(obj: CollectionType) {
+  set elements(obj: CollectionType<T>) {
     this.clear();
     if (!obj || typeof obj !== 'object') {
       return;
@@ -94,10 +94,10 @@ export class Collection {
 
   /**
    * Returns all values in collection.
-   * @returns {Array<any>} Array of values.
+   * @returns {Array<T>} Array of values.
    */
-  get values(): Array<any> {
-    const values: Array<any> = [];
+  get values(): Array<T> {
+    const values: Array<T> = [];
     if (!this.list.length) {
       return values;
     }
@@ -111,7 +111,7 @@ export class Collection {
    * Creates instance of Collection.
    * @param {CollectionType} [elements] - Elements of collection.
    */
-  constructor(elements: CollectionType | undefined = undefined) {
+  constructor(elements: CollectionType<T> | undefined = undefined) {
     if (!elements) {
       return;
     }
@@ -149,7 +149,7 @@ export class Collection {
    * Append and replace object in collection.
    * @param {Object} obj - Object to be added. Keys will be replaced if exist.
    */
-  add(obj: CollectionType) {
+  add(obj: CollectionType<T>) {
     if (!obj || typeof obj !== 'object') {
       return;
     }
@@ -235,7 +235,7 @@ export class Collection {
    * @param {string} key - Key of element to retrieve.
    * @returns {any} Value associated with key.
    */
-  get(key: string): any {
+  get(key: string): T | undefined {
     return this.collection[key];
   }
 
@@ -244,7 +244,7 @@ export class Collection {
    * @param {number} index - Index of element to retrieve.
    * @returns {any} Value at specified index.
    */
-  getByIndex(index: number): any {
+  getByIndex(index: number): T | undefined {
     const length = this.list.length;
     if (index < 0) {
       index = length + index;
@@ -333,7 +333,7 @@ export class Collection {
    * Removes and returns last element from collection.
    * @returns {any} Removed value.
    */
-  pop(): any {
+  pop(): T | undefined {
     const key = this.list.pop();
     if (!key) {
       return;
@@ -349,7 +349,7 @@ export class Collection {
    * @param {any} value - Value of element.
    * @returns {void}
    */
-  push(key: string, value: any): void {
+  push(key: string, value: T): void {
     if (!key) {
       return;
     }
@@ -362,7 +362,7 @@ export class Collection {
    * Removes and returns first element from collection.
    * @returns {any} Removed value.
    */
-  shift(): any {
+  shift(): T | undefined {
     const key = this.list.shift();
     if (!key) {
       return;
@@ -378,7 +378,7 @@ export class Collection {
    * @param {any} value - Value of element.
    * @returns {void}
    */
-  unshift(key: string, value: any): void {
+  unshift(key: string, value: T): void {
     if (!key) {
       return;
     }
@@ -394,7 +394,7 @@ export class Collection {
    * @returns {boolean} True if callback returns truthy value for every element; otherwise, false.
    */
   every(
-    callback: (value: any, key: string, index: number) => boolean,
+    callback: (value: T, key: string, index: number) => boolean,
     thisArg?: any,
   ): boolean {
     const length = this.list.length;
@@ -418,7 +418,7 @@ export class Collection {
    * @returns {Array<any>} New array with elements that pass test.
    */
   filter(
-    callback: (value: any, key: string, index: number) => boolean,
+    callback: (value: T, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> {
     const length = this.list.length;
@@ -443,12 +443,12 @@ export class Collection {
    * @returns {Array<any> | undefined} Array containing value and key of first matching element, or undefined if no element matches.
    */
   find(
-    callback: (value: any, key: string, index: number) => boolean,
+    callback: (value: T, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> | undefined {
     const length = this.list.length;
     if (!length) {
-      return undefined;
+      return;
     }
     for (let index = 0; index < length; index++) {
       const key = this.list[index];
@@ -457,7 +457,7 @@ export class Collection {
         return [value, key];
       }
     }
-    return undefined;
+    return;
   }
 
   /**
@@ -467,12 +467,12 @@ export class Collection {
    * @returns {Array<any> | undefined} Array containing value and key of first matching element, or undefined if no element matches.
    */
   findReversed(
-    callback: (value: any, key: string, index: number) => boolean,
+    callback: (value: T, key: string, index: number) => boolean,
     thisArg?: any,
   ): Array<any> | undefined {
     const length = this.list.length;
     if (!length) {
-      return undefined;
+      return;
     }
     for (let index = length - 1; index >= 0; index--) {
       const key = this.list[index];
@@ -481,7 +481,7 @@ export class Collection {
         return [value, key];
       }
     }
-    return undefined;
+    return;
   }
 
   /**
@@ -491,7 +491,7 @@ export class Collection {
    * @returns {void}
    */
   forEach(
-    callback: (value: any, key: string, index: number) => void,
+    callback: (value: T, key: string, index: number) => void,
     thisArg?: any,
   ): void {
     const length = this.list.length;
@@ -512,7 +512,7 @@ export class Collection {
    * @returns {void}
    */
   forEachReversed(
-    callback: (value: any, key: string, index: number) => void,
+    callback: (value: T, key: string, index: number) => void,
     thisArg?: any,
   ): void {
     const length = this.list.length;
@@ -542,7 +542,7 @@ export class Collection {
    * @returns {Array<any>} New array with results of calling callback on every element.
    */
   map(
-    callback: (value: any, key: string, index: number) => any,
+    callback: (value: T, key: string, index: number) => any,
     thisArg?: any,
   ): Array<any> {
     const length = this.list.length;
@@ -565,7 +565,7 @@ export class Collection {
    * @returns {boolean} True if at least one element passes test; otherwise, false.
    */
   some(
-    callback: (value: any, key: string, index: number) => boolean,
+    callback: (value: T, key: string, index: number) => boolean,
     thisArg?: any,
   ): boolean {
     const length = this.list.length;
