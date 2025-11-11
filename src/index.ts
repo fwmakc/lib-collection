@@ -259,13 +259,74 @@ export class Collection {
     return this.collection[key];
   }
 
+  private move(keyFrom: string, keyTo: string, type: 'after' | 'before'): void {
+    const fromIndex = this.list.indexOf(keyFrom);
+    const toIndex = this.list.indexOf(keyTo);
+    const length = this.list.length;
+
+    if (
+      fromIndex === toIndex ||
+      fromIndex < 0 ||
+      fromIndex >= length ||
+      toIndex < 0 ||
+      toIndex >= length
+    ) {
+      return;
+    }
+
+    const [element] = this.list.splice(fromIndex, 1);
+
+    let koeff = 0;
+
+    if (type === 'after' && toIndex < fromIndex) {
+      koeff = 1;
+    }
+    if (type === 'before' && toIndex >= fromIndex) {
+      koeff = -1;
+    }
+
+    this.list.splice(toIndex + koeff, 0, element);
+  }
+
   /**
-   * Checks if key exists in collection.
-   * @param {string} key - Key to check.
-   * @returns {boolean} True if key exists, false otherwise.
+   * Moves element to position after specified key.
+   * @param {string} keyFrom - Element key to move.
+   * @param {string} keyTo - Key after which element should be placed.
+   * @returns {void}
    */
-  includes(key: string): boolean {
-    return this.list.includes(key);
+  moveAfter(keyFrom: string, keyTo: string): void {
+    this.move(keyFrom, keyTo, 'after');
+  }
+
+  /**
+   * Moves element to position before specified key.
+   * @param {string} keyFrom - Element key to move.
+   * @param {string} keyTo - Key before which element should be placed.
+   * @returns {void}
+   */
+  moveBefore(keyFrom: string, keyTo: string): void {
+    this.move(keyFrom, keyTo, 'before');
+  }
+
+  /**
+   * Renames element in list.
+   * If old name does not exist in list, method does nothing.
+   * @param {string} oldName - Current name of item to be renamed.
+   * @param {string} newName - New name to assign to item.
+   * @returns {void}
+   */
+  rename(oldName: string, newName: string): void {
+    const targetIndex = this.list.indexOf(oldName);
+    const existsIndex = this.list.indexOf(newName);
+    if (targetIndex < 0) {
+      return;
+    }
+    if (existsIndex >= 0) {
+      this.list.splice(existsIndex, 1);
+    }
+    this.list[targetIndex] = newName;
+    this.collection[newName] = this.collection[oldName];
+    delete this.collection[oldName];
   }
 
   /**
@@ -463,6 +524,15 @@ export class Collection {
       const value = this.collection[key];
       callback.call(thisArg, value, key, index);
     }
+  }
+
+  /**
+   * Checks if key exists in collection.
+   * @param {string} key - Key to check.
+   * @returns {boolean} True if key exists, false otherwise.
+   */
+  includes(key: string): boolean {
+    return this.list.includes(key);
   }
 
   /**
