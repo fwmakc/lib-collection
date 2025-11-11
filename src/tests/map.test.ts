@@ -35,7 +35,7 @@ describe('Проверка коллекции map', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const mapped = col.map((item: any, key: any, index: any) => {
       console.log('-- ', index, key, item);
       return `${item}++`;

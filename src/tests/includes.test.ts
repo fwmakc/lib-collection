@@ -43,7 +43,7 @@ describe('Проверка коллекции includes', () => {
   ];
 
   testCases.forEach(({ collection, includes, result }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const isIncludes = col.includes(includes);
     it(`Исходная строка: ${collection}`, () => {
       expect(isIncludes).toEqual(result);

@@ -35,7 +35,7 @@ describe('Проверка коллекции values', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const values = col.values;
     console.log(values);
 

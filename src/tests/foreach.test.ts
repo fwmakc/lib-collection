@@ -35,7 +35,7 @@ describe('Проверка коллекции forEach', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const mapped: Array<any> = [];
     col.forEach((value: any, key: any, index: any) => {
       console.log('-- ', index, key, value);

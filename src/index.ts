@@ -10,7 +10,7 @@ type CollectionType<T> = {
 /**
  * Class representing collection with various operations such as manipulations with arrays and objects.
  */
-export class Collection<T> {
+export class Collection<T = any> {
   /** @type {Array<string>} */
   protected list: Array<string> = [];
 

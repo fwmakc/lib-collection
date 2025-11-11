@@ -35,7 +35,7 @@ describe('Проверка коллекции iterator', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     for (const [value, key] of col) {
       console.log('-- ', { key, value });
     }

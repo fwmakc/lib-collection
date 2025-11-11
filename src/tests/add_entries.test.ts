@@ -35,7 +35,7 @@ describe('Проверка коллекции addEntries', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     col.addEntries([
       ['a', 100],
       ['z', 999],

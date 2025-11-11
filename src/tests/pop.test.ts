@@ -72,7 +72,7 @@ describe('Проверка коллекции pop', () => {
   ];
 
   testCases.forEach(({ collection, result }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const value = col.pop();
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {

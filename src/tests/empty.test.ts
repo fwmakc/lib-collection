@@ -28,7 +28,7 @@ describe('Проверка коллекции empty', () => {
   ];
 
   testCases.forEach(({ collection, isEmpty }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const isEmptyCollection = col.empty();
     it(`Исходная строка: ${collection}`, () => {
       if (isEmpty) {

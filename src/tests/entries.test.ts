@@ -35,7 +35,7 @@ describe('Проверка коллекции entries', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     col.entries = [
       ['a', 100],
       ['z', 999],

@@ -35,7 +35,7 @@ describe('Проверка коллекции keys', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const keys = col.keys;
     console.log(keys);
 

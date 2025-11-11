@@ -18,7 +18,7 @@ describe('Проверка создания коллекции', () => {
   ];
 
   testCases.forEach(({ collection }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {
       expect(true).toBeTruthy();

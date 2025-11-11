@@ -61,7 +61,7 @@ describe('Проверка коллекции getByIndex', () => {
   ];
 
   testCases.forEach(({ collection, index }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const result = col.getByIndex(index);
     const key = Object.keys(collection).at(index);
     // @ts-expect-error next line

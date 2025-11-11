@@ -39,7 +39,7 @@ describe('Проверка коллекции get', () => {
   ];
 
   testCases.forEach(({ collection, key }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const result = col.get(key);
     // @ts-expect-error next line
     const expectedValue = collection[key];

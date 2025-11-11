@@ -67,7 +67,7 @@ describe('Проверка коллекции push', () => {
   ];
 
   testCases.forEach(({ collection, key, value }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     col.push(key, value);
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {

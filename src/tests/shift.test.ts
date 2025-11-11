@@ -72,7 +72,7 @@ describe('Проверка коллекции shift', () => {
   ];
 
   testCases.forEach(({ collection, result }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     const value = col.shift();
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {

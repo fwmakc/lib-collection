@@ -61,7 +61,7 @@ describe('Проверка коллекции delete', () => {
   ];
 
   testCases.forEach(({ collection, key }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     col.delete(key);
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {

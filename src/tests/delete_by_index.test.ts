@@ -61,7 +61,7 @@ describe('Проверка коллекции deleteByIndex', () => {
   ];
 
   testCases.forEach(({ collection, index }) => {
-    const col = new Collection(collection);
+    const col = new Collection<any>(collection);
     col.deleteByIndex(index);
     console.log(col);
     it(`Исходная строка: ${collection}`, () => {
