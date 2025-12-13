@@ -7,15 +7,28 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
+.pnp*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -23,5 +36,16 @@ dist-ssr
 *.sln
 *.sw?
 
-out
-android
+# OS generated files
+Thumbs.db
+
+# Temporary folders
+tmp/
+temp/
+.out/
+
+# Jest
+jest-cache/
+
+# ESLint cache
+.eslintcache

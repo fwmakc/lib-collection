@@ -39,7 +39,7 @@ describe('Проверка коллекции addEntries', () => {
     col.addEntries([
       ['a', 100],
       ['z', 999],
-      [2, [true, true, true]],
+      ['2', [true, true, true]],
     ]);
     const values = col.entries;
     console.log(values);

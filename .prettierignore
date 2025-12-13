@@ -1,0 +1,7 @@
+dist
+node_modules
+*.md
+*.json
+*.min.js
+package-lock.json
+yarn.lock
