@@ -26,7 +26,9 @@ export class Collection<T> {
    * @returns {CollectionType} Elements of collection.
    */
   get elements(): CollectionType<T> {
-    return Object.fromEntries(this.collection);
+    const a = Object.fromEntries(this.entries);
+    console.log(a);
+    return a;
   }
 
   /**
@@ -104,10 +106,19 @@ export class Collection<T> {
    * @param {Object} obj - Object to be added. Keys will be replaced if exist.
    */
   add(obj: CollectionType<T>): void {
-    this.collection = {
-      ...this.collection,
-      ...obj,
-    };
+    for (const [key, item] of Object.entries(obj)) {
+      this.collection.set(key, item);
+    }
+  }
+
+  /**
+   * Append and replace object in collection.
+   * @param {Object} obj - Object to be added. Keys will be replaced if exist.
+   */
+  addEntries(entries: EntriesType): void {
+    for (const [key, item] of entries) {
+      this.collection.set(key, item);
+    }
   }
 
   /**
@@ -328,6 +339,27 @@ export class Collection<T> {
     for (const [key, value] of this.collection) {
       callback.call(thisArg, value, key, this);
     }
+    return this;
+  }
+
+  /**
+   * Выполняет функцию для каждого элемента коллекции
+   * @param callback Функция, вызываемая для каждого элемента
+   * @param thisArg Значение this для callback
+   * @returns Текущая коллекция для чейнинга
+   */
+  forEachReversed(
+    callback: (value: T, key: string, collection: this) => void,
+    thisArg?: unknown,
+  ): this {
+    const entries = Array.from(this.collection.entries());
+
+    // Идем с конца массива к началу
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const [key, value] = entries[i]!;
+      callback.call(thisArg, value, key, this);
+    }
+
     return this;
   }
 
