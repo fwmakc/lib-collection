@@ -1,7 +1,7 @@
 {
   "name": "lib-collection",
-  "version": "0.1.2",
-  "productName": "Collection Library [deprecated]",
+  "version": "0.2.0",
+  "productName": "Collection Library",
   "description": "Library for work with collection",
   "license": "MIT",
   "keywords": [
