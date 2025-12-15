@@ -539,6 +539,10 @@ export class Collection<T> {
   }
 
   /**
+   * Special methods
+   */
+
+  /**
    * Returns iterable object for collection.
    * @returns {Iterator} Iterator that yields [value, key, index].
    */

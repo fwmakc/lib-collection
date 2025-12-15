@@ -34,9 +34,9 @@ import { Collection } from 'lib-collection';
 
 ```
 const collection = new Collection({
-    a: 11,
-    b: 22,
-    c: 33,
+  a: 11,
+  b: 22,
+  c: 33,
 });
 ```
 
@@ -50,9 +50,68 @@ collection.push('d', 44);
 
 ```
 for (const [value, key] of collection) {
-    console.log({ key, value });
+  console.log({ key, value });
 }
 ```
+
+# Список методов
+
+Методы извлечения данных:
+
+- elements: CollectionType<T>
+- entries: EntriesType<T>
+- keys: string[]
+- length: number
+- values: T[]
+
+Методы простых операций:
+
+- add(obj: CollectionType)
+- addByEntries(pairs: EntriesType<T>)
+- clear()
+- delete(key: string)
+- deleteByIndex(index: number)
+- empty()
+- get(key: string)
+- getByIndex(index: number)
+- includes(key: string)
+- set(obj: CollectionType)
+- setByEntries(pairs: EntriesType<T>)
+
+Методы изменения порядка коллекции:
+
+- moveAfter(keyFrom: string, keyTo: string)
+- moveBefore(keyFrom: string, keyTo: string)
+- rename(oldName: string, newName: string)
+
+Методы работы со стеком и очередью:
+
+- pop()
+- push(key: string, value: any)
+- shift()
+- unshift(key: string, value: any)
+
+Методы итерации:
+
+- every(callback: boolean)
+- filter(callback: boolean)
+- find(callback: boolean)
+- findReversed(callback: boolean)
+- forEach(callback: void)
+- forEachReversed(callback: void)
+- map(callback: U)
+- reduce(callback: U, initialValue: U)
+- some(callback: boolean)
+
+Специальные методы:
+
+- `${collection}`
+- collection.toString()
+- String(collection)
+- collection.toJSON()
+- JSON.stringify(collection)
+- Number(collection)
+- +collection
 
 # Интерфейсы
 
@@ -194,7 +253,7 @@ for (const [value, key] of collection) {
 @param {number} index - индекс извлекаемого элемента.
 ```
 
-## **includes(key: string): boolean**
+## **includes(key: string)**
 
 Проверяет, существует ли ключ в коллекции.
 
@@ -261,7 +320,7 @@ for (const [value, key] of collection) {
 
 # Методы работы со стеком и очередью
 
-## **pop(): any**
+## **pop()**
 
 Удаляет и возвращает последний элемент из коллекции.
 
@@ -376,6 +435,37 @@ callback: (accumulator: U | undefined, value: T, key: string, index: number) => 
 Выполняет проверку для элементов коллекции.
 
 Возвращает **true**, если хотя бы один элемент прошел проверку. Иначе возвращает **false**.
+
+# Специальные методы
+
+Коллекция может быть преобразована в строковое и числовое значение.
+
+```
+const collection = new Collection();
+```
+
+При вызове коллекции как строки, возвращается тип **Collection** и строка в формате **json**:
+
+```
+console.log(collection);
+console.log(`${collection}`);
+console.log(collection.toString());
+console.log(String(collection));
+```
+
+При вызове коллекции как **json**, возвращается только строка в формате **json**:
+
+```
+console.log(collection.toJSON());
+console.log(JSON.stringify(collection));
+```
+
+При вызове коллекции как числа, возвращается **размер**, количество элементов коллекции:
+
+```
+console.log(Number(collection));
+console.log(+collection);
+```
 
 # Особенности поведения
 
