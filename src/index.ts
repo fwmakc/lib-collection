@@ -1,7 +1,7 @@
 /**
  * Represents collection with various operations for managing key-value pairs.
  * @typedef {Object} CollectionType
- * @property {any} [key] - Value associated with key in collection.
+ * @property {string} [key] - Value associated with key in collection.
  */
 interface CollectionType<T> {
   [key: string]: T;
@@ -9,7 +9,7 @@ interface CollectionType<T> {
 
 /**
  * Array of key-value pairs where key is string and value is any type.
- * @typedef {[string, unknown][]} EntriesType
+ * @typedef {[string, any][]} EntriesType
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EntriesType = [string, any][];
@@ -22,68 +22,6 @@ export class Collection<T> {
   protected collection: Map<string, T>;
 
   /**
-   * Returns all elements from collection.
-   * @returns {CollectionType} Elements of collection.
-   */
-  get elements(): CollectionType<T> {
-    const a = Object.fromEntries(this.entries);
-    console.log(a);
-    return a;
-  }
-
-  /**
-   * Set object in collection.
-   * @param {Object} obj - Object to be set.
-   */
-  set elements(obj: CollectionType<T>) {
-    this.entries = Object.entries(obj);
-  }
-
-  /**
-   * Returns all elements from collection as array of key-value pair.
-   * @returns {EntriesType} Elements of collection as key-value pair array.
-   */
-  get entries(): EntriesType {
-    return [...this.collection.entries()];
-  }
-
-  /**
-   * Set elements in collection from array of key-value pairs.
-   * @param {EntriesType} pairs - Array to be set.
-   */
-
-  set entries(pairs: EntriesType) {
-    this.collection.clear();
-    for (const [key, value] of pairs) {
-      this.collection.set(key, value);
-    }
-  }
-
-  /**
-   * Returns all keys in collection.
-   * @returns {string[]} Array of keys.
-   */
-  get keys(): string[] {
-    return [...this.collection.keys()];
-  }
-
-  /**
-   * Returns number of elements in collection.
-   * @returns {number} Length of collection.
-   */
-  get length(): number {
-    return this.collection.size;
-  }
-
-  /**
-   * Returns all values in collection.
-   * @returns {T[]} Array of values.
-   */
-  get values(): T[] {
-    return [...this.collection.values()];
-  }
-
-  /**
    * Creates instance of Collection.
    * @param {CollectionType} [elements] - Elements of collection.
    */
@@ -92,13 +30,43 @@ export class Collection<T> {
   }
 
   /**
-   * Returns iterable object for collection.
-   * @returns {Iterator} Iterator that yields [value, key, index].
+   * Returns all elements from collection.
+   * @returns {CollectionType} Elements of collection.
    */
-  *[Symbol.iterator](): IterableIterator<[T, string]> {
-    for (const [key, value] of this.collection) {
-      yield [value, key];
-    }
+  elements(): CollectionType<T> {
+    return Object.fromEntries(this.collection.entries());
+  }
+
+  /**
+   * Returns all elements from collection as array of key-value pair.
+   * @returns {EntriesType} Elements of collection as key-value pair array.
+   */
+  entries(): EntriesType {
+    return [...this.collection.entries()];
+  }
+
+  /**
+   * Returns all keys in collection.
+   * @returns {string[]} Array of keys.
+   */
+  keys(): string[] {
+    return [...this.collection.keys()];
+  }
+
+  /**
+   * Returns number of elements in collection.
+   * @returns {number} Length of collection.
+   */
+  length(): number {
+    return this.collection.size;
+  }
+
+  /**
+   * Returns all values in collection.
+   * @returns {T[]} Array of values.
+   */
+  values(): T[] {
+    return [...this.collection.values()];
   }
 
   /**
@@ -107,16 +75,6 @@ export class Collection<T> {
    */
   add(obj: CollectionType<T>): void {
     for (const [key, item] of Object.entries(obj)) {
-      this.collection.set(key, item);
-    }
-  }
-
-  /**
-   * Append and replace object in collection.
-   * @param {Object} obj - Object to be added. Keys will be replaced if exist.
-   */
-  addEntries(entries: EntriesType): void {
-    for (const [key, item] of entries) {
       this.collection.set(key, item);
     }
   }
@@ -144,7 +102,7 @@ export class Collection<T> {
    * @returns {void}
    */
   deleteByIndex(index: number): void {
-    const key = this.keys.at(index) as string;
+    const key = this.keys().at(index) as string;
     this.collection.delete(key);
   }
 
@@ -171,8 +129,17 @@ export class Collection<T> {
    * @returns {any} Value at specified index.
    */
   getByIndex(index: number): T | undefined {
-    const key = this.keys.at(index) as string;
+    const key = this.keys().at(index) as string;
     return this.collection.get(key);
+  }
+
+  /**
+   * Append and replace object in collection.
+   * @param {Object} obj - Object to be added. Keys will be replaced if exist.
+   */
+  set(obj: CollectionType<T>): void {
+    this.clear();
+    this.add(obj);
   }
 
   private moveElement(
@@ -187,7 +154,7 @@ export class Collection<T> {
       return;
     }
 
-    const entries = Array.from(this.collection.entries());
+    const entries = this.entries();
     const moveIdx = entries.findIndex(([k]) => k === keyFrom);
 
     if (moveIdx === -1) return;
@@ -248,7 +215,7 @@ export class Collection<T> {
       this.delete(newKey);
     }
 
-    const entries = [...this.collection.entries()];
+    const entries = this.entries();
 
     const index = entries.findIndex(([key]) => key === oldKey);
 
@@ -269,7 +236,7 @@ export class Collection<T> {
     if (!this.length) {
       return;
     }
-    const key = this.keys.at(-1) as string;
+    const key = this.keys().at(-1) as string;
     const value = this.collection.get(key);
     this.collection.delete(key);
     return value;
@@ -297,7 +264,7 @@ export class Collection<T> {
     if (!this.length) {
       return;
     }
-    const key = this.keys.at(0) as string;
+    const key = this.keys().at(0) as string;
     const value = this.collection.get(key);
     this.collection.delete(key);
     return value;
@@ -327,134 +294,204 @@ export class Collection<T> {
   }
 
   /**
-   * Выполняет функцию для каждого элемента коллекции
-   * @param callback Функция, вызываемая для каждого элемента
-   * @param thisArg Значение this для callback
-   * @returns Текущая коллекция для чейнинга
+   * Executes function for each element of collection
+   * @param predicate Function to call for each element
+   * @returns Current collection
    */
-  forEach(
-    callback: (value: T, key: string, collection: this) => void,
-    thisArg?: unknown,
-  ): this {
+  forEach(predicate: (value: T, key: string, index: number) => void): this {
+    let index = 0;
+
     for (const [key, value] of this.collection) {
-      callback.call(thisArg, value, key, this);
+      predicate(value, key, index);
+      index += 1;
     }
+
     return this;
   }
 
   /**
-   * Выполняет функцию для каждого элемента коллекции
-   * @param callback Функция, вызываемая для каждого элемента
-   * @param thisArg Значение this для callback
-   * @returns Текущая коллекция для чейнинга
+   * Executes function for each element of collection
+   * @param predicate Function to call for each element
+   * @returns Current collection
    */
   forEachReversed(
-    callback: (value: T, key: string, collection: this) => void,
-    thisArg?: unknown,
+    predicate: (value: T, key: string, index: number) => void,
   ): this {
-    const entries = Array.from(this.collection.entries());
+    const entries = this.entries();
 
-    // Идем с конца массива к началу
-    for (let i = entries.length - 1; i >= 0; i--) {
+    for (let i = this.length() - 1; i >= 0; i--) {
       const [key, value] = entries[i]!;
-      callback.call(thisArg, value, key, this);
+      predicate(value, key, i);
     }
 
     return this;
   }
 
   /**
-   * Создает новую коллекцию с элементами, прошедшими проверку
-   * @param predicate Функция-предикат для проверки элементов
-   * @param thisArg Значение this для predicate
-   * @returns Новая коллекция с отфильтрованными элементами
+   * Creates new collection with elements that pass validation
+   * @param callback Function for validating elements
+   * @returns New collection with filtered elements
    */
   filter(
-    predicate: (value: T, key: string, collection: this) => boolean,
-    thisArg?: unknown,
+    callback: (value: T, key: string, index: number) => boolean,
   ): Collection<T> {
     const result = new Collection<T>();
+    let index = 0;
 
     for (const [key, value] of this.collection) {
-      if (predicate.call(thisArg, value, key, this)) {
+      if (callback(value, key, index)) {
         result.collection.set(key, value);
       }
+      index += 1;
     }
 
     return result;
   }
 
   /**
-   * Создает новую коллекцию с преобразованными значениями
-   * @param transform Функция преобразования
-   * @param thisArg Значение this для transform
-   * @returns Новая коллекция с преобразованными значениями
+   * Creates new collection with transformed values
+   * @param transform Transformation function
+   * @returns New collection with transformed values
    */
   map<U>(
-    transform: (value: T, key: string, collection: this) => U,
-    thisArg?: unknown,
+    transform: (value: T, key: string, index: number) => U,
   ): Collection<U> {
     const result = new Collection<U>();
+    let index = 0;
 
     for (const [key, value] of this.collection) {
-      result.collection.set(key, transform.call(thisArg, value, key, this));
+      result.collection.set(key, transform(value, key, index));
+      index += 1;
     }
 
     return result;
   }
 
   /**
-   * Reduce - свертка коллекции в одно значение
-   * @param reducer Функция-редьюсер
-   * @param initialValue Начальное значение аккумулятора
-   * @returns Результат свертки
+   * Condense collection into single value
+   * @param reducer Reducer function
+   * @param initialValue Initial accumulator value
+   * @returns Result of condense
    */
   reduce<U>(
-    reducer: (accumulator: U, value: T, key: string, collection: this) => U,
+    reducer: (accumulator: U, value: T, key: string, index: number) => U,
     initialValue: U,
   ): U {
     let accumulator = initialValue;
+    let index = 0;
 
     for (const [key, value] of this.collection) {
-      accumulator = reducer(accumulator, value, key, this);
+      accumulator = reducer(accumulator, value, key, index);
+      index += 1;
     }
 
     return accumulator;
   }
 
   /**
-   * Some - проверяет, удовлетворяет ли хотя бы один элемент условию
-   * @param predicate Функция-предикат
-   * @param thisArg Значение this для predicate
-   * @returns true если хотя бы один элемент удовлетворяет условию
+   * Checks whether at least one element satisfies condition
+   * @param predicate Predicate function
+   * @returns true if at least one element satisfies condition
    */
-  some(
-    predicate: (value: T, key: string, collection: this) => boolean,
-    thisArg?: unknown,
-  ): boolean {
+  some(predicate: (value: T, key: string, index: number) => boolean): boolean {
+    let index = 0;
+
     for (const [key, value] of this.collection) {
-      if (predicate.call(thisArg, value, key, this)) {
+      if (predicate(value, key, index)) {
         return true;
       }
+      index += 1;
     }
+
     return false;
   }
 
   /**
-   * Every - проверяет, удовлетворяют ли все элементы условию
-   * @param predicate Функция-предикат
-   * @param thisArg Значение this для predicate
-   * @returns true если все элементы удовлетворяют условию
+   * Checks whether all elements satisfy condition
+   * @param predicate Predicate function
+   * @returns true if all elements satisfy condition
    */
-  every(
-    predicate: (value: T, key: string, collection: this) => boolean,
-    thisArg?: unknown,
-  ): boolean {
+  every(predicate: (value: T, key: string, index: number) => boolean): boolean {
+    let index = 0;
+
     for (const [key, value] of this.collection) {
-      if (!predicate.call(thisArg, value, key, this)) {
+      if (!predicate(value, key, index)) {
         return false;
       }
+      index += 1;
     }
+
     return true;
+  }
+
+  /**
+   * Returns iterable object for collection.
+   * @returns {Iterator} Iterator that yields [value, key, index].
+   */
+  *[Symbol.iterator](): IterableIterator<[T, string]> {
+    for (const [key, value] of this.collection) {
+      yield [value, key];
+    }
+  }
+
+  /**
+   * Controls implicit transform to primitives
+   * @override
+   * @param {unknown} hint - Transform type
+   * @returns {string|number} Transform result
+   */
+  [Symbol.toPrimitive](hint: unknown): string | number {
+    if (hint === 'number') return this.length();
+    return this.toString();
+  }
+
+  /**
+   * Returns string representation for Node.js
+   * @override
+   * @param {unknown} depth
+   * @param {unknown} options
+   * @returns {string} Transform result
+   */
+  [Symbol.for('nodejs.util.inspect.custom')]?(
+    _depth: unknown,
+    _options: unknown,
+  ): string {
+    return this.toString();
+  }
+
+  /**
+   * Object.prototype.toString
+   * @type {string}
+   */
+  get [Symbol.toStringTag](): string {
+    return 'Collection';
+  }
+
+  /**
+   * Returns string representation
+   * @override
+   * @returns {string} string representation
+   */
+  toString(): string {
+    let elements: unknown;
+    try {
+      elements = JSON.stringify(this.elements());
+    } catch (_err) {
+      elements = null;
+    }
+    return `Collection ${elements}`;
+  }
+
+  /**
+   * Return JSON.stringify representation
+   * @override
+   * @returns {string} string representation
+   */
+  toJSON(): string {
+    try {
+      return JSON.stringify(this.elements());
+    } catch (_err) {
+      return 'null';
+    }
   }
 }
