@@ -9,9 +9,6 @@ describe('Проверка коллекции filter', () => {
       (_value: any, _key: string, index: number) => index % 2 === 0,
     );
 
-    console.log('--', newCol);
-    // console.log('--', newCol.toString());
-
     it(`Исходная строка: ${collection}`, () => {
       expect(newCol.keys()).toEqual(equal.keys);
       expect(newCol.values()).toEqual(equal.values);

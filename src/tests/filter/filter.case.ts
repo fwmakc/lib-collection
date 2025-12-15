@@ -30,15 +30,15 @@ export const testCases = [
       '4': 'd',
     },
     equal: {
-      keys: ['1', '2', '3', '4', '5', '6', 'a', 'z'],
-      values: ['a', [true, true, true], 'c', 'd', 'e', 'f', 100, 9999],
+      keys: ['1', '3', '5'],
+      values: ['a', 'c', 'e'],
     },
   },
   {
     collection: {},
     equal: {
-      keys: ['2', 'a', 'z'],
-      values: [[true, true, true], 100, 9999],
+      keys: [],
+      values: [],
     },
   },
 ];
