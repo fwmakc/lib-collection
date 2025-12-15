@@ -11,8 +11,8 @@ interface CollectionType<T> {
  * Array of key-value pairs where key is string and value is any type.
  * @typedef {[string, any][]} EntriesType
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EntriesType = [string, any][];
+
+type EntriesType<T> = [string, T][];
 
 /**
  * Class representing collection with various operations such as manipulations with arrays and objects.
@@ -30,6 +30,10 @@ export class Collection<T> {
   }
 
   /**
+   * Data extraction methods
+   */
+
+  /**
    * Returns all elements from collection.
    * @returns {CollectionType} Elements of collection.
    */
@@ -39,9 +43,9 @@ export class Collection<T> {
 
   /**
    * Returns all elements from collection as array of key-value pair.
-   * @returns {EntriesType} Elements of collection as key-value pair array.
+   * @returns {EntriesType<T>} Elements of collection as key-value pair array.
    */
-  entries(): EntriesType {
+  entries(): EntriesType<T> {
     return [...this.collection.entries()];
   }
 
@@ -70,40 +74,68 @@ export class Collection<T> {
   }
 
   /**
+   * Simple operation methods
+   */
+
+  /**
    * Append and replace object in collection.
    * @param {Object} obj - Object to be added. Keys will be replaced if exist.
+   * @returns {Collection<T>}
    */
-  add(obj: CollectionType<T>): void {
-    for (const [key, item] of Object.entries(obj)) {
-      this.collection.set(key, item);
+  add(obj: CollectionType<T>): Collection<T> {
+    for (const [key, value] of Object.entries(obj)) {
+      this.collection.set(key, value);
     }
+    return this;
+  }
+
+  /**
+   * Add and replace elements in collection from array of key-value pairs.
+   * @param {EntriesType<T>} pairs - Array to be added. Keys will be replaced if exist.
+   * @returns {Collection<T>}
+   */
+  addByEntries(pairs: EntriesType<T>): Collection<T> {
+    if (!pairs || !Array.isArray(pairs) || !pairs?.length) {
+      return this;
+    }
+    for (const pair of pairs) {
+      if (!pair || !Array.isArray(pair) || !pair?.length) {
+        continue;
+      }
+      const [key, value] = pair;
+      this.collection.set(key, value);
+    }
+    return this;
   }
 
   /**
    * Clears collection.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  clear(): void {
+  clear(): Collection<T> {
     this.collection.clear();
+    return this;
   }
 
   /**
    * Deletes element from collection by key.
    * @param {string} key - Key of element to be deleted.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  delete(key: string): void {
+  delete(key: string): Collection<T> {
     this.collection.delete(key);
+    return this;
   }
 
   /**
    * Deletes element from collection by its index.
    * @param {number} index - Index of element to be deleted.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  deleteByIndex(index: number): void {
+  deleteByIndex(index: number): Collection<T> {
     const key = this.keys().at(index) as string;
     this.collection.delete(key);
+    return this;
   }
 
   /**
@@ -117,7 +149,7 @@ export class Collection<T> {
   /**
    * Retrieves value associated with key.
    * @param {string} key - Key of element to retrieve.
-   * @returns {any} Value associated with key.
+   * @returns {T} Value associated with key.
    */
   get(key: string): T | undefined {
     return this.collection.get(key);
@@ -126,7 +158,7 @@ export class Collection<T> {
   /**
    * Retrieves value at specified index.
    * @param {number} index - Index of element to retrieve.
-   * @returns {any} Value at specified index.
+   * @returns {T} Value at specified index.
    */
   getByIndex(index: number): T | undefined {
     const key = this.keys().at(index) as string;
@@ -134,13 +166,37 @@ export class Collection<T> {
   }
 
   /**
-   * Append and replace object in collection.
-   * @param {Object} obj - Object to be added. Keys will be replaced if exist.
+   * Checks if key exists in collection.
+   * @param {string} key - Key to check.
+   * @returns {boolean} True if key exists, false otherwise.
    */
-  set(obj: CollectionType<T>): void {
-    this.clear();
-    this.add(obj);
+  includes(key: string): boolean {
+    return this.collection.has(key);
   }
+
+  /**
+   * Clear and set object in collection.
+   * @param {CollectionType} elements - Object to be added. Keys will be replaced if exist.
+   * @returns {Collection<T>}
+   */
+  set(elements: CollectionType<T>): Collection<T> {
+    this.collection = new Map(Object.entries(elements));
+    return this;
+  }
+
+  /**
+   * Append and replace collection from array of key-value pairs.
+   * @param {EntriesType<T>} pairs - Array to be added. Keys will be replaced if exist.
+   * @returns {Collection<T>}
+   */
+  setByEntries(pairs: EntriesType<T>): Collection<T> {
+    this.collection = new Map(pairs);
+    return this;
+  }
+
+  /**
+   * Methods of order changing collection elements
+   */
 
   private moveElement(
     keyFrom: string,
@@ -183,20 +239,22 @@ export class Collection<T> {
    * Moves element to position after specified key.
    * @param {string} keyFrom - Element key to move.
    * @param {string} keyTo - Key after which element should be placed.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  moveAfter(keyFrom: string, keyTo: string): void {
+  moveAfter(keyFrom: string, keyTo: string): Collection<T> {
     this.moveElement(keyFrom, keyTo, 'after');
+    return this;
   }
 
   /**
    * Moves element to position before specified key.
    * @param {string} keyFrom - Element key to move.
    * @param {string} keyTo - Key before which element should be placed.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  moveBefore(keyFrom: string, keyTo: string): void {
+  moveBefore(keyFrom: string, keyTo: string): Collection<T> {
     this.moveElement(keyFrom, keyTo, 'before');
+    return this;
   }
 
   /**
@@ -204,11 +262,11 @@ export class Collection<T> {
    * If old name does not exist in list, method does nothing.
    * @param {string} oldName - Current name of item to be renamed.
    * @param {string} newName - New name to assign to item.
-   * @returns {void}
+   * @returns {Collection<T>}
    */
-  rename(oldKey: string, newKey: string): void {
+  rename(oldKey: string, newKey: string): Collection<T> {
     if (oldKey === newKey || !this.collection.has(oldKey)) {
-      return;
+      return this;
     }
 
     if (this.collection.has(newKey)) {
@@ -220,17 +278,23 @@ export class Collection<T> {
     const index = entries.findIndex(([key]) => key === oldKey);
 
     if (index < 0) {
-      return;
+      return this;
     }
 
     entries[index]![0] = newKey;
 
     this.collection = new Map(entries);
+
+    return this;
   }
 
   /**
+   * Stack and queue methods
+   */
+
+  /**
    * Removes and returns last element from collection.
-   * @returns {any} Removed value.
+   * @returns {T} Removed value.
    */
   pop(): T | undefined {
     if (!this.length) {
@@ -245,7 +309,7 @@ export class Collection<T> {
   /**
    * Adds new key-value pair to collection.
    * @param {string} key - Key of element.
-   * @param {any} value - Value of element.
+   * @param {T} value - Value of element.
    * @returns {void}
    */
   push(key: string, value: T): void {
@@ -258,7 +322,7 @@ export class Collection<T> {
 
   /**
    * Removes and returns first element from collection.
-   * @returns {any} Removed value.
+   * @returns {T} Removed value.
    */
   shift(): T | undefined {
     if (!this.length) {
@@ -273,7 +337,7 @@ export class Collection<T> {
   /**
    * Adds new key-value pair to beginning of collection.
    * @param {string} key - Key of element.
-   * @param {any} value - Value of element.
+   * @param {T} value - Value of element.
    * @returns {void}
    */
   unshift(key: string, value: T): void {
@@ -285,46 +349,25 @@ export class Collection<T> {
   }
 
   /**
-   * Checks if key exists in collection.
-   * @param {string} key - Key to check.
-   * @returns {boolean} True if key exists, false otherwise.
+   * Iterate methods
    */
-  includes(key: string): boolean {
-    return this.collection.has(key);
-  }
 
   /**
-   * Executes function for each element of collection
-   * @param predicate Function to call for each element
-   * @returns Current collection
+   * Checks whether all elements satisfy condition
+   * @param predicate Predicate function
+   * @returns true if all elements satisfy condition
    */
-  forEach(predicate: (value: T, key: string, index: number) => void): this {
+  every(predicate: (value: T, key: string, index: number) => boolean): boolean {
     let index = 0;
 
     for (const [key, value] of this.collection) {
-      predicate(value, key, index);
+      if (!predicate(value, key, index)) {
+        return false;
+      }
       index += 1;
     }
 
-    return this;
-  }
-
-  /**
-   * Executes function for each element of collection
-   * @param predicate Function to call for each element
-   * @returns Current collection
-   */
-  forEachReversed(
-    predicate: (value: T, key: string, index: number) => void,
-  ): this {
-    const entries = this.entries();
-
-    for (let i = this.length() - 1; i >= 0; i--) {
-      const [key, value] = entries[i]!;
-      predicate(value, key, i);
-    }
-
-    return this;
+    return true;
   }
 
   /**
@@ -346,6 +389,90 @@ export class Collection<T> {
     }
 
     return result;
+  }
+
+  /**
+   * Returns first element that satisfies provided testing function.
+   * @param {function} callback - Function to test each element.
+   * @returns {CollectionType<T> | undefined} Array containing value and key of first matching element, or undefined if no element matches.
+   */
+  find(
+    callback: (value: T, key: string, index: number) => boolean,
+  ): CollectionType<T> | undefined {
+    if (!this.length()) {
+      return;
+    }
+
+    let index = 0;
+
+    for (const [key, value] of this.collection) {
+      if (callback(value, key, index)) {
+        return { [key]: value };
+      }
+      index += 1;
+    }
+
+    return;
+  }
+
+  /**
+   * Returns first element that satisfies provided testing function.
+   * @param {function} callback - Function to test each element.
+   * @returns {CollectionType<T> | undefined} Array containing value and key of first matching element, or undefined if no element matches.
+   */
+  findReversed(
+    callback: (value: T, key: string, index: number) => boolean,
+  ): CollectionType<T> | undefined {
+    if (!this.length()) {
+      return;
+    }
+
+    const entries = this.entries();
+
+    for (let i = this.length() - 1; i >= 0; i--) {
+      const [key, value] = entries[i]!;
+      if (callback(value, key, i)) {
+        return { [key]: value };
+      }
+    }
+
+    return;
+  }
+
+  /**
+   * Executes function for each element of collection
+   * @param predicate Function to call for each element
+   * @returns {Collection<T>}
+   */
+  forEach(
+    predicate: (value: T, key: string, index: number) => void,
+  ): Collection<T> {
+    let index = 0;
+
+    for (const [key, value] of this.collection) {
+      predicate(value, key, index);
+      index += 1;
+    }
+
+    return this;
+  }
+
+  /**
+   * Executes function for each element of collection
+   * @param predicate Function to call for each element
+   * @returns {Collection<T>}
+   */
+  forEachReversed(
+    predicate: (value: T, key: string, index: number) => void,
+  ): Collection<T> {
+    const entries = this.entries();
+
+    for (let i = this.length() - 1; i >= 0; i--) {
+      const [key, value] = entries[i]!;
+      predicate(value, key, i);
+    }
+
+    return this;
   }
 
   /**
@@ -374,9 +501,14 @@ export class Collection<T> {
    * @returns Result of condense
    */
   reduce<U>(
-    reducer: (accumulator: U, value: T, key: string, index: number) => U,
-    initialValue: U,
-  ): U {
+    reducer: (
+      accumulator: U | undefined,
+      value: T,
+      key: string,
+      index: number,
+    ) => U,
+    initialValue?: U,
+  ): U | undefined {
     let accumulator = initialValue;
     let index = 0;
 
@@ -404,24 +536,6 @@ export class Collection<T> {
     }
 
     return false;
-  }
-
-  /**
-   * Checks whether all elements satisfy condition
-   * @param predicate Predicate function
-   * @returns true if all elements satisfy condition
-   */
-  every(predicate: (value: T, key: string, index: number) => boolean): boolean {
-    let index = 0;
-
-    for (const [key, value] of this.collection) {
-      if (!predicate(value, key, index)) {
-        return false;
-      }
-      index += 1;
-    }
-
-    return true;
   }
 
   /**
